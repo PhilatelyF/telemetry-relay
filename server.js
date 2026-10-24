@@ -2,6 +2,7 @@ const express = require("express");
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
+const latestPlayers = new Map();
 const { WebSocketServer } = require("ws");
 
 const app = express();
@@ -246,6 +247,17 @@ function processTelemetryEntry(parsed) {
 		was_fall_damage: !!was_fall_damage,
 	});
 
+	latestPlayers.set(parsed.name, {
+	  name: parsed.name,
+	  x,
+	  y,
+	  z,
+	  velocity: {
+	    x: typeof vel_x === "number" ? vel_x : 0,
+	    y: typeof vel_y === "number" ? vel_y : 0,
+	    z: typeof vel_z === "number" ? vel_z : 0,
+	  },
+	});
 	return true;
 }
 
@@ -324,6 +336,11 @@ app.get("/viewers", (req, res) => {
 
 app.get("/", (req, res) => {
 	res.send("Telemetry relay is running.");
+});
+app.get("/data", (req, res) => {
+  res.status(200).json({
+    players: Array.from(latestPlayers.values()),
+  });
 });
 
 const PORT = process.env.PORT || 3000;
