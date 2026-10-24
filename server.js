@@ -260,7 +260,7 @@ function processTelemetryEntry(parsed) {
 	});
 	return true;
 }
-app.post("/recordings/upload", express.json({ limit: "50mb" }), (req, res) => {
+app.post("/recordings/upload", express.json({ limit: "100mb" }), (req, res) => {
   if (!requireSecret(req, res)) return;
 
   const recording = req.body;
