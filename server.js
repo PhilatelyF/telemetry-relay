@@ -260,6 +260,20 @@ function processTelemetryEntry(parsed) {
 	});
 	return true;
 }
+app.post("/recordings/upload", express.json({ limit: "50mb" }), (req, res) => {
+  if (!requireSecret(req, res)) return;
+
+  const recording = req.body;
+
+  if (!recording?.metadata?.id || !recording?.frames) {
+    return res.status(400).json({ error: "Invalid recording format" });
+  }
+
+  const filePath = path.join(RECORDINGS_DIR, `${recording.metadata.id}.json`);
+  fs.writeFileSync(filePath, JSON.stringify(recording));
+
+  res.status(200).json({ ok: true, id: recording.metadata.id });
+});
 
 app.post("/telemetry", (req, res) => {
 	if (isRateLimited()) {
