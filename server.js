@@ -23,7 +23,7 @@ app.use((req, res, next) => {
 });
 
 app.use(express.urlencoded({ extended: true, limit: "10kb" }));
-app.use(express.json({ limit: "1mb" }));
+app.use(express.json({ limit: "10mb" }));
 
 const server = http.createServer(app);
 const wss = new WebSocketServer({ server });
